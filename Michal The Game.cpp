@@ -6,6 +6,13 @@
 #include "Global.h"
 #include "Plansza.h"
 #include "Bloczek.h"
+#include "OpenGLFunctions.h"
+
+// Ustawianie variabli
+int x{};
+int y{};
+int b{};
+Plansza table;
 
 // Tworzenie Listy wszystkich mozliwych bloczkow
 DuzyKwadrat x1;
@@ -317,19 +324,60 @@ void KolejnaGra(Plansza* table) {
 
 int main()
 {
-	// Ustawianie variabli
-	int x{};
-	int y{};
-	int b{};
-	Plansza table;
+// OPENGL #################################################
 
-	// Glowna petla gry
-	do {
-		Generacja(table,&b, &x, &y);
-		gameplaying = Przegrana(table);
-		KolejnaGra(&table);
-		Stawianie(b, x, y, &table);
-		Zwyciestwo(&table);
-	} while (gameplaying);
-    
+	// Inicjalizowanie GLFW
+	glfwInit();
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	
+	// Tworzenie Okna
+	GLFWwindow* window = glfwCreateWindow(ScreenWidth, ScreenHeight, "MichalBlast", NULL, NULL);
+	
+	if (window == NULL) {
+		std::cout << "Blad GLFW \n";
+		glfwTerminate();
+		return -1;
+	}
+	glfwMakeContextCurrent(window);
+
+	// Inicjalizowanie GLAD
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+		std::cout << "Blad GLAD'a \n";
+		return -1;
+	}
+
+	// Ustala Viewport na ktorym OpenGL bedzie mogl rysowac
+	glViewport(0, 0, ScreenWidth, ScreenHeight);	// ((x,y) lewego dolnego pixela okna), ((x,y) rozmiar okna)
+
+	// Ustala która funkcja będzie odpowiedzialna za zmienianie rozmiaru okna -- "OpenGLFunctions"
+	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
+	
+
+	
+	while (gameplaying && !glfwWindowShouldClose(window)) {
+		// Input
+		processInput(window);
+
+		// Rendering
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		// Odbieranie eventow
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+
+		// Glowna petla gry
+		//Generacja(table,&b, &x, &y);
+		//gameplaying = Przegrana(table);
+		//KolejnaGra(&table);
+		//Stawianie(b, x, y, &table);
+		//Zwyciestwo(&table);
+
+	} 
+
+	glfwTerminate();
+	return 0;
 }

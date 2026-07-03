@@ -145,6 +145,7 @@
     <ClCompile Include="Bloczek.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Michal The Game.cpp" />
+    <ClCompile Include="OpenGlFunctions.cpp" />
     <ClCompile Include="Plansza.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -154,6 +155,7 @@
     <ClInclude Include="Dependencies\Include\GLFW\glfw3native.h" />
     <ClInclude Include="Dependencies\Include\KHR\khrplatform.h" />
     <ClInclude Include="Global.h" />
+    <ClInclude Include="OpenGLFunctions.h" />
     <ClInclude Include="Plansza.h" />
   </ItemGroup>
   <ItemGroup>

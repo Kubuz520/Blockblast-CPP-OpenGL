@@ -322,6 +322,42 @@ void KolejnaGra(Plansza* table) {
 	}
 }
 
+
+// Shader punktów (najprostszy mozliwy)
+const char* vertexShaderSource = "#version 330 core\n"
+"layout (location = 0) in vec3 aPos;\n"
+"void main()\n"
+"{\n"
+" gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+"}\0";
+
+// Shader Kolorów (fragment shader)
+const char* fragmentShaderSource = "#version 330 core\n"
+"out vec4 FragColor;\n"
+"void main()\n"
+"{\n"
+"FragColor = vec4(1.0f,0.5f,0.2f,1.0f);\n"
+"}\0";
+
+// Koordynaty trojkata
+float vertices[] = {
+	-0.5f,-0.5f, 0.0f,
+	 0.5f,-0.5f, 0.0f,
+	 0.5f, 0.0f, 0.0f
+};
+
+// Id bufforu
+unsigned int VBO;
+// Id shaderu punktów
+unsigned int VertexShader;
+// Id fragment shaderu
+unsigned int fragmentShader;
+// Id programu shaderów
+unsigned int shaderProgram;
+
+// Id VAO
+unsigned int VAO;
+
 int main()
 {
 // OPENGL #################################################
@@ -354,9 +390,50 @@ int main()
 	// Ustala która funkcja będzie odpowiedzialna za zmienianie rozmiaru okna -- "OpenGLFunctions"
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
+
+	// Generowanie bufforów czyli rezerwowanie miejsca na karcie graficznej i wsadzanie informacji o wektorach
+	glGenBuffers(1, &VBO);
+
+
+	// Shadery ###########################################################
+
+
+	// Ustalanie Shaderów
+	VertexShader = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(VertexShader, 1, &vertexShaderSource, NULL);
+	glCompileShader(VertexShader);
+	
+	// Sprawdzenie Czy Shadery sie skompilowaly
+	int success;
+	char infoLog[512];
+	glGetShaderiv(VertexShader, GL_COMPILE_STATUS, &success);
+
+	if (!success)
+	{
+		glGetShaderInfoLog(VertexShader, 512, NULL, infoLog);
+		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" <<
+			infoLog << std::endl;
+	}
+
+	// Ustalanie Fragment Shadera
+	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+	glCompileShader(fragmentShader);
+
+	// Tworzenie programu do shaderów
+	shaderProgram = glCreateProgram();
+	glAttachShader(shaderProgram, VertexShader);
+	glAttachShader(shaderProgram, fragmentShader);
+	glLinkProgram(shaderProgram);
+
+	// Usuweanie niepotrzebnych shaderów
+	glDeleteShader(VertexShader);
+	glDeleteShader(fragmentShader);
 	
 
-	
+	// Petla Gry #@####################################################
+
+
 	while (gameplaying && !glfwWindowShouldClose(window)) {
 		// Input
 		processInput(window);
@@ -364,6 +441,22 @@ int main()
 		// Rendering
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
+
+		// Rysowanie trójkąta
+		glGenVertexArrays(1, &VAO);
+
+		glBindVertexArray(VAO);
+
+		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(0);
+
+		glUseProgram(shaderProgram);
+		glBindVertexArray(VAO);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+
 
 		// Odbieranie eventow
 		glfwSwapBuffers(window);

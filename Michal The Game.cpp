@@ -340,14 +340,26 @@ const char* fragmentShaderSource = "#version 330 core\n"
 "}\0";
 
 // Koordynaty trojkata
-float vertices[] = {
+float vertices_triangle[] = {
 	-0.5f,-0.5f, 0.0f,
 	 0.5f,-0.5f, 0.0f,
 	 0.5f, 0.0f, 0.0f
 };
+// Koordynaty trojkata
+float vertices_square[] = {
+	-0.8f, 0.8f, 0,
+	-0.8f, 0.2f, 0,
+	-0.2f, 0.8f, 0,
+	-0.2f, 0.2f, 0,
+	-0.2f, 0.8f, 0,
+	-0.8f, 0.2f, 0,
+};
 
-// Id bufforu
-unsigned int VBO;
+// Id bufforu Trojkata
+unsigned int VBO_Triangle;
+// Id bufforu Kwadratu
+unsigned int VBO_Square;
+
 // Id shaderu punktów
 unsigned int VertexShader;
 // Id fragment shaderu
@@ -355,8 +367,24 @@ unsigned int fragmentShader;
 // Id programu shaderów
 unsigned int shaderProgram;
 
-// Id VAO
-unsigned int VAO;
+// Id VAO Trojkata
+unsigned int VAO_Triangle;
+// Id VAO Kwadratu
+unsigned int VAO_Square;
+
+// Funkcja Rysujaca to co chemy 
+void Draw(int Id, int ShaderId) {
+	if(Id == VAO_Triangle) {
+		glBindVertexArray(VAO_Triangle);
+		glUseProgram(ShaderId);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+	}
+	else if (Id == VAO_Square) {
+		glBindVertexArray(VAO_Square);
+		glUseProgram(ShaderId);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+	}
+}
 
 int main()
 {
@@ -392,7 +420,8 @@ int main()
 
 
 	// Generowanie bufforów czyli rezerwowanie miejsca na karcie graficznej i wsadzanie informacji o wektorach
-	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &VBO_Triangle);
+	glGenBuffers(1, &VBO_Square);
 
 
 	// Shadery ###########################################################
@@ -431,6 +460,30 @@ int main()
 	glDeleteShader(fragmentShader);
 	
 
+	// Zapisywanie VAO ########################################
+
+
+	// Zapisywanie w VAO jak rysowac trojkat
+	glGenVertexArrays(1, &VAO_Triangle);
+	glBindVertexArray(VAO_Triangle);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_Triangle);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_triangle), vertices_triangle, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	// Zapisywanie w VAO jak rysowac Kwadrat
+	glGenVertexArrays(1, &VAO_Square);
+	glBindVertexArray(VAO_Square);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_Square);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_square), vertices_square, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+
 	// Petla Gry #@####################################################
 
 
@@ -443,19 +496,8 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		// Rysowanie trójkąta
-		glGenVertexArrays(1, &VAO);
-
-		glBindVertexArray(VAO);
-
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-		glEnableVertexAttribArray(0);
-
-		glUseProgram(shaderProgram);
-		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		Draw(VAO_Square, shaderProgram);
+		Draw(VBO_Triangle, shaderProgram);
 
 
 		// Odbieranie eventow

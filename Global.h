@@ -8,5 +8,8 @@ inline int score{ 0 };
 inline bool gameplaying{ true };
 
 // Screen 
-const int ScreenWidth{ 800 };
-const int ScreenHeight{ 600 };
+inline int ScreenWidth{ 1000 };
+inline int ScreenHeight{ 1000 };
+
+// Bloczki
+const int BlockWidth{ 100 };

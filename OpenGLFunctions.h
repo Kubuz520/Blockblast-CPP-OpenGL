@@ -3,6 +3,10 @@
 #include <Glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <vector>
+#include "Global.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
+std::vector<float> GenerateSquareVertexes(float x, float y, float width);
+;

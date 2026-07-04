@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <random>
 #include <iostream>
+#include <vector>
 #include "Global.h"
 #include "Plansza.h"
 #include "Bloczek.h"
@@ -340,13 +341,13 @@ const char* fragmentShaderSource = "#version 330 core\n"
 "}\0";
 
 // Koordynaty trojkata
-float vertices_triangle[] = {
+std::vector<float> vertices_triangle = {
 	-0.5f,-0.5f, 0.0f,
 	 0.5f,-0.5f, 0.0f,
 	 0.5f, 0.0f, 0.0f
 };
 // Koordynaty trojkata
-float vertices_square[] = {
+std::vector<float> vertices_square = {
 	-0.8f, 0.8f, 0,
 	-0.8f, 0.2f, 0,
 	-0.2f, 0.8f, 0,
@@ -377,12 +378,20 @@ void Draw(int Id, int ShaderId) {
 	if(Id == VAO_Triangle) {
 		glBindVertexArray(VAO_Triangle);
 		glUseProgram(ShaderId);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawArrays(GL_TRIANGLES, 0, vertices_triangle.size());
 	}
 	else if (Id == VAO_Square) {
 		glBindVertexArray(VAO_Square);
 		glUseProgram(ShaderId);
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glDrawArrays(GL_TRIANGLES, 0, vertices_square.size());
+	}
+}
+
+void ChangeVerticesArray(int VBO_Id, std::vector<float> InstertingArray) {
+	if (VBO_Id == VBO_Square) {
+		vertices_square.insert(vertices_square.end(), InstertingArray.begin(), InstertingArray.end());
+		glBindBuffer(GL_ARRAY_BUFFER, VBO_Square);
+		glBufferData(GL_ARRAY_BUFFER, vertices_triangle.size() * sizeof(vertices_square), vertices_square.data(), GL_STATIC_DRAW);
 	}
 }
 
@@ -468,7 +477,7 @@ int main()
 	glBindVertexArray(VAO_Triangle);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO_Triangle);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_triangle), vertices_triangle, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vertices_triangle.size() * sizeof(float), vertices_triangle.data(), GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
@@ -478,11 +487,15 @@ int main()
 	glBindVertexArray(VAO_Square);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO_Square);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_square), vertices_square, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vertices_triangle.size() * sizeof(vertices_square), vertices_square.data(), GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
+	std::vector<float> temp = GenerateSquareVertexes(0, 0, BlockWidth);
+	ChangeVerticesArray(VBO_Square, temp);
+	std::vector<float> temp2 = GenerateSquareVertexes(500, 500, BlockWidth*3);
+	ChangeVerticesArray(VBO_Square, temp2);
 
 	// Petla Gry #@####################################################
 

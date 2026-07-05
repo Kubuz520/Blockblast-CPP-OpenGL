@@ -55,6 +55,71 @@ bool B1Used{ true };
 bool B2Used{ true };
 bool B3Used{ true };
 
+// Variable Graficzne ###########################################
+
+// Shader punktów (najprostszy mozliwy)
+const char* vertexShaderSource = "#version 330 core\n"
+"layout (location = 0) in vec3 aPos;\n"
+"void main()\n"
+"{\n"
+" gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+"}\0";
+
+// Shader Kolorów (fragment shader)
+const char* fragmentShaderSource = "#version 330 core\n"
+"out vec4 FragColor;\n"
+"void main()\n"
+"{\n"
+"FragColor = vec4(1.0f,0.5f,0.2f,1.0f);\n"
+"}\0";
+
+const char* fragmentShaderSourceEmpty = "#version 330 core\n"
+"out vec4 FragColor;\n"
+"void main()\n"
+"{\n"
+"FragColor = vec4(0.8f,0.8f,0.8f,1.0f);\n"
+"}\0";
+
+// Id shaderu punktów
+unsigned int VertexShader;
+// Id fragment shaderu
+unsigned int fragmentShader;
+unsigned int fragmentShaderEmpty;
+// Id programu shaderów
+unsigned int shaderProgram;
+unsigned int shaderProgramEmpty;
+
+// Id VAO Trojkata
+unsigned int VAO_Empty;
+// Id VAO Kwadratu
+unsigned int VAO_Square;
+
+// Funkcja Rysujaca to co chemy 
+void Draw(int Id, int ShaderId) {
+	if (Id == VAO_Empty) {
+		glBindVertexArray(VAO_Empty);
+		glUseProgram(ShaderId);
+		glDrawArrays(GL_TRIANGLES, 0, vertices_empty.size());
+	}
+	else if (Id == VAO_Square) {
+		glBindVertexArray(VAO_Square);
+		glUseProgram(ShaderId);
+		glDrawArrays(GL_TRIANGLES, 0, vertices_square.size());
+	}
+}
+
+void UpdateBuffor(int VBO_Id) {
+	if (VBO_Id == VBO_Square) {
+		glBindBuffer(GL_ARRAY_BUFFER, VBO_Square);
+		glBufferData(GL_ARRAY_BUFFER, vertices_square.size() * sizeof(float), vertices_square.data(), GL_STATIC_DRAW);
+	}
+	if (VBO_Id == VBO_Empty) {
+		glBindBuffer(GL_ARRAY_BUFFER, VBO_Empty);
+		glBufferData(GL_ARRAY_BUFFER, vertices_empty.size() * sizeof(float), vertices_empty.data(), GL_STATIC_DRAW);
+	}
+}
+
+
 Block PrzypisanieBloczku(int i) {
 	Block tmp;
 	switch (i) {
@@ -107,10 +172,17 @@ void Generacja(Plansza table,int* b, int* x, int* y) {
 	}
 
 	// Pokazuje Bloczki i plansze
+	vertices_square.clear();
+	vertices_empty.clear();
+
 	table.Show();
-	B1.Show();
-	B2.Show();
-	B3.Show();
+	
+	B1.Show(1);
+	B2.Show(2);
+	B3.Show(3);
+	
+	UpdateBuffor(VBO_Square);
+	UpdateBuffor(VBO_Empty);
 
 	// Branie Bloczka
 	int b1{};
@@ -323,78 +395,6 @@ void KolejnaGra(Plansza* table) {
 	}
 }
 
-
-// Shader punktów (najprostszy mozliwy)
-const char* vertexShaderSource = "#version 330 core\n"
-"layout (location = 0) in vec3 aPos;\n"
-"void main()\n"
-"{\n"
-" gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-"}\0";
-
-// Shader Kolorów (fragment shader)
-const char* fragmentShaderSource = "#version 330 core\n"
-"out vec4 FragColor;\n"
-"void main()\n"
-"{\n"
-"FragColor = vec4(1.0f,0.5f,0.2f,1.0f);\n"
-"}\0";
-
-// Koordynaty trojkata
-std::vector<float> vertices_triangle = {
-	-0.5f,-0.5f, 0.0f,
-	 0.5f,-0.5f, 0.0f,
-	 0.5f, 0.0f, 0.0f
-};
-// Koordynaty trojkata
-std::vector<float> vertices_square = {
-	-0.8f, 0.8f, 0,
-	-0.8f, 0.2f, 0,
-	-0.2f, 0.8f, 0,
-	-0.2f, 0.2f, 0,
-	-0.2f, 0.8f, 0,
-	-0.8f, 0.2f, 0,
-};
-
-// Id bufforu Trojkata
-unsigned int VBO_Triangle;
-// Id bufforu Kwadratu
-unsigned int VBO_Square;
-
-// Id shaderu punktów
-unsigned int VertexShader;
-// Id fragment shaderu
-unsigned int fragmentShader;
-// Id programu shaderów
-unsigned int shaderProgram;
-
-// Id VAO Trojkata
-unsigned int VAO_Triangle;
-// Id VAO Kwadratu
-unsigned int VAO_Square;
-
-// Funkcja Rysujaca to co chemy 
-void Draw(int Id, int ShaderId) {
-	if(Id == VAO_Triangle) {
-		glBindVertexArray(VAO_Triangle);
-		glUseProgram(ShaderId);
-		glDrawArrays(GL_TRIANGLES, 0, vertices_triangle.size());
-	}
-	else if (Id == VAO_Square) {
-		glBindVertexArray(VAO_Square);
-		glUseProgram(ShaderId);
-		glDrawArrays(GL_TRIANGLES, 0, vertices_square.size());
-	}
-}
-
-void ChangeVerticesArray(int VBO_Id, std::vector<float> InstertingArray) {
-	if (VBO_Id == VBO_Square) {
-		vertices_square.insert(vertices_square.end(), InstertingArray.begin(), InstertingArray.end());
-		glBindBuffer(GL_ARRAY_BUFFER, VBO_Square);
-		glBufferData(GL_ARRAY_BUFFER, vertices_triangle.size() * sizeof(vertices_square), vertices_square.data(), GL_STATIC_DRAW);
-	}
-}
-
 int main()
 {
 // OPENGL #################################################
@@ -429,7 +429,7 @@ int main()
 
 
 	// Generowanie bufforów czyli rezerwowanie miejsca na karcie graficznej i wsadzanie informacji o wektorach
-	glGenBuffers(1, &VBO_Triangle);
+	glGenBuffers(1, &VBO_Empty);
 	glGenBuffers(1, &VBO_Square);
 
 
@@ -440,23 +440,15 @@ int main()
 	VertexShader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(VertexShader, 1, &vertexShaderSource, NULL);
 	glCompileShader(VertexShader);
-	
-	// Sprawdzenie Czy Shadery sie skompilowaly
-	int success;
-	char infoLog[512];
-	glGetShaderiv(VertexShader, GL_COMPILE_STATUS, &success);
-
-	if (!success)
-	{
-		glGetShaderInfoLog(VertexShader, 512, NULL, infoLog);
-		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" <<
-			infoLog << std::endl;
-	}
 
 	// Ustalanie Fragment Shadera
 	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
 	glCompileShader(fragmentShader);
+
+	fragmentShaderEmpty = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragmentShaderEmpty, 1, &fragmentShaderSourceEmpty, NULL);
+	glCompileShader(fragmentShaderEmpty);
 
 	// Tworzenie programu do shaderów
 	shaderProgram = glCreateProgram();
@@ -464,20 +456,26 @@ int main()
 	glAttachShader(shaderProgram, fragmentShader);
 	glLinkProgram(shaderProgram);
 
+	shaderProgramEmpty = glCreateProgram();
+	glAttachShader(shaderProgramEmpty, VertexShader);
+	glAttachShader(shaderProgramEmpty, fragmentShaderEmpty);
+	glLinkProgram(shaderProgramEmpty);
+
 	// Usuweanie niepotrzebnych shaderów
 	glDeleteShader(VertexShader);
 	glDeleteShader(fragmentShader);
+	glDeleteShader(fragmentShaderEmpty);
 	
 
 	// Zapisywanie VAO ########################################
 
 
 	// Zapisywanie w VAO jak rysowac trojkat
-	glGenVertexArrays(1, &VAO_Triangle);
-	glBindVertexArray(VAO_Triangle);
+	glGenVertexArrays(1, &VAO_Empty);
+	glBindVertexArray(VAO_Empty);
 
-	glBindBuffer(GL_ARRAY_BUFFER, VBO_Triangle);
-	glBufferData(GL_ARRAY_BUFFER, vertices_triangle.size() * sizeof(float), vertices_triangle.data(), GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_Empty);
+	glBufferData(GL_ARRAY_BUFFER, vertices_empty.size() * sizeof(float), vertices_empty.data(), GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
@@ -487,15 +485,10 @@ int main()
 	glBindVertexArray(VAO_Square);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO_Square);
-	glBufferData(GL_ARRAY_BUFFER, vertices_triangle.size() * sizeof(vertices_square), vertices_square.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vertices_square.size() * sizeof(float), vertices_square.data(), GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-
-	std::vector<float> temp = GenerateSquareVertexes(0, 0, BlockWidth);
-	ChangeVerticesArray(VBO_Square, temp);
-	std::vector<float> temp2 = GenerateSquareVertexes(500, 500, BlockWidth*3);
-	ChangeVerticesArray(VBO_Square, temp2);
 
 	// Petla Gry #@####################################################
 
@@ -508,21 +501,20 @@ int main()
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		// Rysowanie trójkąta
+		// Rysowanie 
 		Draw(VAO_Square, shaderProgram);
-		Draw(VBO_Triangle, shaderProgram);
-
+		Draw(VAO_Empty, shaderProgramEmpty);
 
 		// Odbieranie eventow
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 
 		// Glowna petla gry
-		//Generacja(table,&b, &x, &y);
-		//gameplaying = Przegrana(table);
-		//KolejnaGra(&table);
-		//Stawianie(b, x, y, &table);
-		//Zwyciestwo(&table);
+		Generacja(table,&b, &x, &y);
+		gameplaying = Przegrana(table);
+		KolejnaGra(&table);
+		Stawianie(b, x, y, &table);
+		Zwyciestwo(&table);
 
 	} 
 

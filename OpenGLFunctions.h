@@ -9,4 +9,4 @@
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
 std::vector<float> GenerateSquareVertexes(float x, float y, float width);
-;
+void ChangeVerticesArray(int VBO_Id, std::vector<float> InstertingArray);

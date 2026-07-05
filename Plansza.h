@@ -1,6 +1,11 @@
 #pragma once
 
+#include <Glad/glad.h>
+#include <GLFW/glfw3.h>
+#include <iostream>
+#include <vector>
 #include "Global.h"
+#include "OpenGLFunctions.h"
 
 class Plansza {
 

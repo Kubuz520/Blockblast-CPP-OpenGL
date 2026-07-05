@@ -27,3 +27,13 @@ std::vector<float> GenerateSquareVertexes(float x, float y, float width) {
 	};
 	return Triangle;
 }
+
+// funkcja dodająca arraya do arraya oraz funkcja updateujaca buffor
+void ChangeVerticesArray(int VBO_Id, std::vector<float> InstertingArray) {
+	if (VBO_Id == VBO_Square) {
+		vertices_square.insert(vertices_square.end(), InstertingArray.begin(), InstertingArray.end());
+	}
+	else if (VBO_Id == VBO_Empty) {
+		vertices_empty.insert(vertices_empty.end(), InstertingArray.begin(), InstertingArray.end());
+	}
+}

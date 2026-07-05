@@ -1,13 +1,19 @@
 
 #include "Bloczek.h"
-#include <iostream>
 
-void Block::Show() {
+
+void Block::Show(int x) {
 	std::cout << "\n";
 	for (int i{ 0 };i < blocklenght; i++) {
 		std::cout << "\n";
 		for (int j{ 0 };j < blocklenght; j++) {
 			std::cout << block[i][j];
+
+			// Grafika
+			if (block[i][j] != 0) {
+				std::vector<float> temp = GenerateSquareVertexes((i * BlockWidth) + (ScreenWidthBufor * x * 2 ) + 500, (j * BlockWidth) + ScreenHeightBufor - 650, BlockWidth);
+				ChangeVerticesArray(VBO_Square, temp);
+			}
 		}
 	}
 	std::cout << "\n";

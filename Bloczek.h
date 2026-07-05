@@ -1,13 +1,18 @@
 #pragma once
 
+#include <Glad/glad.h>
+#include <GLFW/glfw3.h>
+#include <iostream>
+#include <vector>
 #include "Global.h"
+#include "OpenGLFunctions.h"
 
 class Block {
 
 public:
 	int block[blocklenght][blocklenght];
 	virtual ~Block() = default;
-	void Show();
+	void Show(int x);
 
 };
 

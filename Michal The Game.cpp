@@ -506,6 +506,13 @@ int main()
 		Draw(VAO_Empty, shaderProgramEmpty);
 
 		// Odbieranie eventow
+
+		// Zbieranie pozycji myszki i konwertowwanie jej na moje kordynaty
+		glfwGetCursorPos(window, &y_mouse_pos, &x_mouse_pos);
+		y_mouse_pos = y_mouse_pos - (ScreenHeight / 2);
+		x_mouse_pos = x_mouse_pos - (ScreenWidth / 2);
+		//std::cout << "X: " << x_mouse_pos;
+		//std::cout << "Y: " << y_mouse_pos;
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 

@@ -24,6 +24,10 @@ inline unsigned int VBO_Empty;
 // Id bufforu Kwadratu
 inline unsigned int VBO_Square;
 
+// Koordynaty Myszki
+inline double x_mouse_pos;
+inline double y_mouse_pos;
+
 // Koordynaty trojkata
 inline std::vector<float> vertices_empty = {
 

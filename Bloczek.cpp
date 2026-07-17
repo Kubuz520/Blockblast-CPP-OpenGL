@@ -11,7 +11,7 @@ void Block::Show(int x) {
 
 			// Grafika
 			if (block[i][j] != 0) {
-				std::vector<float> temp = GenerateSquareVertexes((i * BlockWidth) + (ScreenWidthBufor * x * 2 ) + 500, (j * BlockWidth) + ScreenHeightBufor - 650, BlockWidth);
+				std::vector<float> temp = GenerateSquareVertexes((j * BlockWidth) + ((ScreenWidth * 0.6) * x) - (ScreenWidth * 1.5), ((lenght - 1 - i) * BlockWidth) + ScreenHeightBufor, BlockWidth);
 				ChangeVerticesArray(VBO_Square, temp);
 			}
 		}

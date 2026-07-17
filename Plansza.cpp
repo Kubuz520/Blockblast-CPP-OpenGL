@@ -15,11 +15,11 @@ void Plansza::Show() {
 
             // Grafika
             if (plansza[i][j] != 0) {
-                std::vector<float> temp = GenerateSquareVertexes((i * BlockWidth) + ScreenWidthBufor, (j * BlockWidth) + ScreenHeightBufor, BlockWidth );
+                std::vector<float> temp = GenerateSquareVertexes((j * BlockWidth) + ScreenWidthBufor, ((lenght - 1 - i) * BlockWidth), BlockWidth);
                 ChangeVerticesArray(VBO_Square, temp);
             }
             else {
-                std::vector<float> temp = GenerateSquareVertexes((i * BlockWidth) + ScreenWidthBufor, (j * BlockWidth) + ScreenHeightBufor, BlockWidth);
+                std::vector<float> temp = GenerateSquareVertexes((j * BlockWidth) + ScreenWidthBufor, ((lenght - 1 - i) * BlockWidth), BlockWidth);
                 ChangeVerticesArray(VBO_Empty, temp);
             }
         }

@@ -14,7 +14,7 @@ inline int ScreenWidth{ 900 };
 inline int ScreenHeight{ 900 };
 
 inline int ScreenWidthBufor{ -300 };
-inline int ScreenHeightBufor{ 0 };
+inline int ScreenHeightBufor{ -700 };
 
 // Bloczki
 const int BlockWidth{ 80 };

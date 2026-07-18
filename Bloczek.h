@@ -10,7 +10,7 @@
 class Block {
 
 public:
-	int block[blocklenght][blocklenght];
+	int block1[blocklenght][blocklenght];
 	virtual ~Block() = default;
 	void Show(int x);
 

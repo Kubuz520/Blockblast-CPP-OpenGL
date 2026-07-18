@@ -7,11 +7,11 @@ void Plansza::Show() {
     
     for (int i{ 0 };i < lenght;i++) {
         if (i == 0) {
-            std::cout << "score: " <<(score);
+            //std::cout << "score: " <<(score);
         }
-        std::cout << "\n";
+        //std::cout << "\n";
         for (int j{ 0 };j < lenght;j++) {
-            std::cout << plansza[i][j];
+            //std::cout << plansza[i][j];
 
             // Grafika
             if (plansza[i][j] != 0) {

@@ -12,7 +12,7 @@
 // Ustawianie variabli
 int x{};
 int y{};
-int b{};
+
 Plansza table;
 
 // Tworzenie Listy wszystkich mozliwych bloczkow
@@ -174,6 +174,7 @@ void Generacja(Plansza table,int* b, int* x, int* y) {
 	// Pokazuje Bloczki i plansze
 	vertices_square.clear();
 	vertices_empty.clear();
+	hitbox_bottom.clear();
 
 	table.Show();
 	
@@ -185,24 +186,30 @@ void Generacja(Plansza table,int* b, int* x, int* y) {
 	UpdateBuffor(VBO_Empty);
 
 	// Branie Bloczka
-	int b1{};
-	std::cout << "Ktory Blok(1-3): ";
-	std::cin >> b1;
-	std::cout << "\n";
+	//int b1{};
+	//std::cout << "Ktory Blok(1-3): ";
+	//std::cin >> b1;
+	//std::cout << "\n";
+
+	//if (b1 == 0) {
+	
+	//	
+	//	return;
+	//}
 
 	// Branie Koordynatow do stawiania bloczka
-	int x1{};
-	int y1{};
+	//int x1{};
+	//int y1{};
 
-	std::cout << "X Koordynat(0-7): ";
-	std::cin >> x1;
-	std::cout << "\n";
-	std::cout << "Y Koordynat(0-7): ";
-	std::cin >> y1;
-	std::cout << "\n";
-	*x = x1;
-	*y = y1;
-	*b = b1;
+	//std::cout << "X Koordynat(0-7): ";
+	//std::cin >> x1;
+	//std::cout << "\n";
+	//std::cout << "Y Koordynat(0-7): ";
+	//std::cin >> y1;
+	//std::cout << "\n";
+	//*x = x1;
+	//*y = y1;
+	//*b = b1;
 
 }
 
@@ -214,7 +221,7 @@ bool SprawdzaniePoprawnosci(Plansza table, Block block, int x, int y) {
 
 	for (int i{ x };i > x - blocklenght;i--) {
 		x1--;
-		if (block.block[y1][x1] == 1) {
+		if (block.block1[y1][x1] == 1) {
 			if (i < 0) {
 				return false ;
 			}
@@ -222,7 +229,7 @@ bool SprawdzaniePoprawnosci(Plansza table, Block block, int x, int y) {
 		y1 = 5;
 		for (int j{ y };j > y - blocklenght;j--) {
 			y1--;
-			if (block.block[y1][x1] == 1) {
+			if (block.block1[y1][x1] == 1) {
 				if (i < 0 || j < 0) {
 					return false ;
 				}
@@ -239,10 +246,10 @@ bool SprawdzaniePoprawnosci(Plansza table, Block block, int x, int y) {
 void Stawianie(int b, int x, int y, Plansza* table) {
 
 	// Bierze odpowiedni blok
-	Block block = PrzypisanieBloczku(b - 1);
+	Block block1 = PrzypisanieBloczku(b - 1);
 	
 	// Wywolanie funkcji ktora sprawdza czy dany ruch jest poprawny
-	if (SprawdzaniePoprawnosci(*table, block, x, y) == false) {
+	if (SprawdzaniePoprawnosci(*table, block1, x, y) == false) {
 		return;
 	}
 	
@@ -255,8 +262,8 @@ void Stawianie(int b, int x, int y, Plansza* table) {
 		y1 = 5;
 		for (int j{ y };j > y - blocklenght;j--) {
 			y1--;
-			if (block.block[y1][x1] == 1) {
-				table->plansza[j][i] = block.block[y1][x1];
+			if (block1.block1[y1][x1] == 1) {
+				table->plansza[j][i] = block1.block1[y1][x1];
 			}
 		}
 	}
@@ -494,6 +501,12 @@ int main()
 
 
 	while (gameplaying && !glfwWindowShouldClose(window)) {
+		
+		// Zbieranie pozycji myszki i konwertowwanie jej na moje kordynaty
+		glfwGetCursorPos(window, &x_mouse_pos, &y_mouse_pos);
+		y_mouse_pos = ((y_mouse_pos - (0.5 * ScreenHeight)) * -2) + ScreenHeight;
+		x_mouse_pos = ((x_mouse_pos - (0.5 * ScreenWidth)) * 2) + ScreenWidth;
+
 		// Input
 		processInput(window);
 
@@ -506,22 +519,26 @@ int main()
 		Draw(VAO_Empty, shaderProgramEmpty);
 
 		// Odbieranie eventow
-
-		// Zbieranie pozycji myszki i konwertowwanie jej na moje kordynaty
-		glfwGetCursorPos(window, &y_mouse_pos, &x_mouse_pos);
-		y_mouse_pos = y_mouse_pos - (ScreenHeight / 2);
-		x_mouse_pos = x_mouse_pos - (ScreenWidth / 2);
-		//std::cout << "X: " << x_mouse_pos;
-		//std::cout << "Y: " << y_mouse_pos;
+		
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 
+		// Printy 
+
+		//std::cout << "Mouse X: " << x_mouse_pos << "\n";
+		//std::cout << "Mouse Y: " << y_mouse_pos << "\n";
+		std::cout << "Block: " << block << "\n";
+		//for (int i{ 0 };i < hitbox_bottom.size();i++) {
+		//	std::cout << "X: " << hitbox_bottom[i].x << " Y: " << hitbox_bottom[i].y << " \n";
+		//	std::cout << "Width: " << hitbox_bottom[i].width << " Lenght: " << hitbox_bottom[i].heigth << " \n";
+		//}
+
 		// Glowna petla gry
-		Generacja(table,&b, &x, &y);
-		gameplaying = Przegrana(table);
-		KolejnaGra(&table);
-		Stawianie(b, x, y, &table);
-		Zwyciestwo(&table);
+		Generacja(table,&block, &x, &y);
+		//gameplaying = Przegrana(table);
+		//KolejnaGra(&table);
+		//Stawianie(b, x, y, &table);
+		//Zwyciestwo(&table);
 
 	} 
 

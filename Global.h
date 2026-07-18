@@ -2,7 +2,23 @@
 
 #include <vector>
 
+struct hitbox {
+	double x;
+	double y;
+	double width;
+	double heigth;
+public:
+	hitbox(double x, double y, double width, double heigth) {
+		this->x = x;
+		this->y = y;
+		this->width = width;
+		this->heigth = heigth;
+	}
+};
+
 // Wazne Variable
+inline int block{};
+
 const int lenght{ 8 };
 const int blocklenght{ 5 };
 const int numberofblocks{ 20 };
@@ -36,3 +52,6 @@ inline std::vector<float> vertices_empty = {
 inline std::vector<float> vertices_square = {
 	
 };
+
+// Hitboxy Dolnych Bloczkow
+inline std::vector<hitbox> hitbox_bottom;

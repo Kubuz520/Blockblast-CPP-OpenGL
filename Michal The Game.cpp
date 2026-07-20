@@ -9,9 +9,6 @@
 #include "Bloczek.h"
 #include "OpenGLFunctions.h"
 
-// Ustawianie variabli
-int x{};
-int y{};
 
 Plansza table;
 
@@ -528,6 +525,7 @@ int main()
 		//std::cout << "Mouse X: " << x_mouse_pos << "\n";
 		//std::cout << "Mouse Y: " << y_mouse_pos << "\n";
 		std::cout << "Block: " << block << "\n";
+		std::cout << "X: " << x << " Y: " << y << "\n";
 		//for (int i{ 0 };i < hitbox_bottom.size();i++) {
 		//	std::cout << "X: " << hitbox_bottom[i].x << " Y: " << hitbox_bottom[i].y << " \n";
 		//	std::cout << "Width: " << hitbox_bottom[i].width << " Lenght: " << hitbox_bottom[i].heigth << " \n";
@@ -535,10 +533,13 @@ int main()
 
 		// Glowna petla gry
 		Generacja(table,&block, &x, &y);
-		//gameplaying = Przegrana(table);
-		//KolejnaGra(&table);
-		//Stawianie(b, x, y, &table);
-		//Zwyciestwo(&table);
+		if (PlaceBlock == true) {
+			gameplaying = Przegrana(table);
+			KolejnaGra(&table);
+			Stawianie(block, x, y, &table);
+			Zwyciestwo(&table);
+			PlaceBlock = false;
+		}
 
 	} 
 

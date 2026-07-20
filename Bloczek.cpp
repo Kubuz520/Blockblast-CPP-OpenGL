@@ -26,7 +26,7 @@ void Block::Show(int x) {
 			
 			// Dodawanie hitboxów
 			if (i == 0 && j == 0) {
-				hitbox tempvar { x_pos + ScreenWidth, y_pos + ScreenHeight, static_cast<double>(BlockWidth * 5), BlockWidth * 5 };
+				hitbox tempvar { x_pos + ScreenWidth, y_pos + ScreenHeight, static_cast<double>(BlockWidth * 5), BlockWidth * 5,x };
 				hitbox_bottom.push_back(tempvar);
 			}
 		}

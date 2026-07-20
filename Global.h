@@ -7,17 +7,26 @@ struct hitbox {
 	double y;
 	double width;
 	double heigth;
+	int x_id;
+	int y_id;
 public:
-	hitbox(double x, double y, double width, double heigth) {
+	hitbox(double x, double y, double width, double heigth, int x_id = -1, int y_id = -1) {
 		this->x = x;
 		this->y = y;
 		this->width = width;
 		this->heigth = heigth;
+		this->x_id = x_id;
+		this->y_id = y_id;
 	}
 };
 
 // Wazne Variable
 inline int block{};
+inline bool PlaceBlock{ false };
+
+// Ustawianie variabli
+inline int x{};
+inline int y{};
 
 const int lenght{ 8 };
 const int blocklenght{ 5 };

@@ -13,15 +13,21 @@ void Plansza::Show() {
         for (int j{ 0 };j < lenght;j++) {
             //std::cout << plansza[i][j];
 
+            double x_pos = (j * BlockWidth) + ScreenWidthBufor;
+            double y_pos = ((lenght - 1 - i) * BlockWidth);
+
             // Grafika
             if (plansza[i][j] != 0) {
-                std::vector<float> temp = GenerateSquareVertexes((j * BlockWidth) + ScreenWidthBufor, ((lenght - 1 - i) * BlockWidth), BlockWidth);
+                std::vector<float> temp = GenerateSquareVertexes(x_pos, y_pos, BlockWidth);
                 ChangeVerticesArray(VBO_Square, temp);
             }
             else {
-                std::vector<float> temp = GenerateSquareVertexes((j * BlockWidth) + ScreenWidthBufor, ((lenght - 1 - i) * BlockWidth), BlockWidth);
+                std::vector<float> temp = GenerateSquareVertexes(x_pos, y_pos, BlockWidth);
                 ChangeVerticesArray(VBO_Empty, temp);
             }
+
+            hitbox tempvar{ x_pos + ScreenWidth - (0.5*BlockWidth), y_pos + ScreenHeight + (0.5 * BlockWidth), static_cast<double>(BlockWidth), static_cast<double>(BlockWidth), j, i};
+            hitbox_bottom.push_back(tempvar);
         }
     }
 }

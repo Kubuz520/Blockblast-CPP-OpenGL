@@ -2,6 +2,9 @@
 
 #include <vector>
 
+#define BOTTOM_BLOCK_ID -1
+#define RESTART_BUTTON_ID -2
+
 struct hitbox {
 	double x;
 	double y;
@@ -23,6 +26,8 @@ public:
 // Wazne Variable
 inline int block{};
 inline bool PlaceBlock{ false };
+inline bool ChangeScreen{ false };
+inline bool PonownaGra{ false };
 
 // Ustawianie variabli
 inline int x{};

@@ -116,25 +116,8 @@ void UpdateBuffor(int VBO_Id) {
 	}
 }
 
-
-Block PrzypisanieBloczku(int i) {
-	Block tmp;
-	switch (i) {
-	case 0:
-		tmp = B1;
-		break;
-	case 1:
-		tmp = B2;
-		break;
-	case 2:
-		tmp = B3;
-		break;
-	}
-	return tmp;
-}
-
 void AddBlocks(int i, int rand) {
-	
+
 	// Dodanie Bloku do jednego ze slotów
 	Block typbloczku = blocks[rand - 1];
 
@@ -152,20 +135,40 @@ void AddBlocks(int i, int rand) {
 
 }
 
+void GenerateBlocks() {
+	for (int i{ 0 };i < 3;i++) {
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_int_distribution<> dist(1, numberofblocks);
+
+		AddBlocks(i, dist(gen));
+	}
+	B1Used = false;
+	B2Used = false;
+	B3Used = false;
+}
+
+Block PrzypisanieBloczku(int i) {
+	Block tmp;
+	switch (i) {
+	case 0:
+		tmp = B1;
+		break;
+	case 1:
+		tmp = B2;
+		break;
+	case 2:
+		tmp = B3;
+		break;
+	}
+	return tmp;
+}
+
 void Generacja(Plansza table,int* b, int* x, int* y) {
 	
 	// Generuje nowe 3 bloczki jesli sa zuzyte
 	if (B1Used == true && B2Used == true && B3Used == true) {
-		for (int i{ 0 };i < 3;i++) {
-			std::random_device rd;
-			std::mt19937 gen(rd());
-			std::uniform_int_distribution<> dist(1, numberofblocks);
-
-			AddBlocks(i, dist(gen));
-		}
-		B1Used = false;
-		B2Used = false;
-		B3Used = false;
+		GenerateBlocks();
 	}
 
 	// Pokazuje Bloczki i plansze
@@ -181,32 +184,6 @@ void Generacja(Plansza table,int* b, int* x, int* y) {
 	
 	UpdateBuffor(VBO_Square);
 	UpdateBuffor(VBO_Empty);
-
-	// Branie Bloczka
-	//int b1{};
-	//std::cout << "Ktory Blok(1-3): ";
-	//std::cin >> b1;
-	//std::cout << "\n";
-
-	//if (b1 == 0) {
-	
-	//	
-	//	return;
-	//}
-
-	// Branie Koordynatow do stawiania bloczka
-	//int x1{};
-	//int y1{};
-
-	//std::cout << "X Koordynat(0-7): ";
-	//std::cin >> x1;
-	//std::cout << "\n";
-	//std::cout << "Y Koordynat(0-7): ";
-	//std::cin >> y1;
-	//std::cout << "\n";
-	//*x = x1;
-	//*y = y1;
-	//*b = b1;
 
 }
 
@@ -381,21 +358,20 @@ bool Przegrana(Plansza table) {
 }
 
 // Funkcja Odpowiedzialna za restart gry
-void KolejnaGra(Plansza* table) {
+void KolejnaGra(Plansza* table, GLFWwindow* window) {
 	if (gameplaying == true) {
 		return;
 	}
 
-	int PonownaGra{};
-
-	std::cout << "\n";
-	std::cout << "Chcesz Zagrać Jeszcze Raz? (1-Tak)";
-	std::cin >> PonownaGra;
-
-	if (PonownaGra == 1) {
+	if (PonownaGra == true) {
+		GenerateBlocks();
 		table->Reset();
 		score = 0;
 		gameplaying = true;
+		ChangeScreen = true;
+	}
+	else {
+		glfwSetWindowShouldClose(window, true);
 	}
 }
 
@@ -495,7 +471,7 @@ int main()
 	glEnableVertexAttribArray(0);
 
 	// Petla Gry #@####################################################
-
+	Generacja(table, &block, &x, &y);
 
 	while (gameplaying && !glfwWindowShouldClose(window)) {
 		
@@ -516,7 +492,6 @@ int main()
 		Draw(VAO_Empty, shaderProgramEmpty);
 
 		// Odbieranie eventow
-		
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 
@@ -524,21 +499,26 @@ int main()
 
 		//std::cout << "Mouse X: " << x_mouse_pos << "\n";
 		//std::cout << "Mouse Y: " << y_mouse_pos << "\n";
-		std::cout << "Block: " << block << "\n";
-		std::cout << "X: " << x << " Y: " << y << "\n";
+		//std::cout << "Block: " << block << "\n";
+		//std::cout << "X: " << x << " Y: " << y << "\n";
 		//for (int i{ 0 };i < hitbox_bottom.size();i++) {
 		//	std::cout << "X: " << hitbox_bottom[i].x << " Y: " << hitbox_bottom[i].y << " \n";
 		//	std::cout << "Width: " << hitbox_bottom[i].width << " Lenght: " << hitbox_bottom[i].heigth << " \n";
 		//}
 
+
 		// Glowna petla gry
-		Generacja(table,&block, &x, &y);
 		if (PlaceBlock == true) {
 			gameplaying = Przegrana(table);
-			KolejnaGra(&table);
+			KolejnaGra(&table, window);
 			Stawianie(block, x, y, &table);
 			Zwyciestwo(&table);
+			block = 0;
 			PlaceBlock = false;
+		}
+		if (ChangeScreen == true) {
+			Generacja(table, &block, &x, &y);
+			ChangeScreen = false;
 		}
 
 	} 
